@@ -1,0 +1,86 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SpawnPoolManager : MonoBehaviour
+{
+	// Setup for singleton.
+	public static SpawnPoolManager instance = null;
+
+	public List<GameObject> objectsToPool;
+	public List<int> numberOfObjectsToPool;
+	Dictionary <string, Stack<GameObject>> pool;
+
+	void Awake ()
+	{
+		if (instance == null)
+			instance = this;
+		else if (instance != this)
+			Destroy (gameObject);
+
+		DontDestroyOnLoad (this.gameObject);
+
+		InitializePoolManager ();
+	}
+
+	void Start ()
+	{
+		
+	}
+
+	void Update ()
+	{
+
+	}
+
+	// Initialize pool manager.
+	void InitializePoolManager ()
+	{
+		pool = new Dictionary<string, Stack<GameObject>> ();
+	
+		for (int i = 0; i < objectsToPool.Count; i++)
+		{
+			pool.Add (objectsToPool [i].name, new Stack<GameObject> ());
+	
+			for (int j = 0; j < numberOfObjectsToPool [i]; j++)
+			{
+				GameObject go = Instantiate (objectsToPool [i]);
+				go.transform.SetParent (transform);
+				go.name = objectsToPool [i].name;
+				go.gameObject.SetActive (false);
+				//go.GetComponent<SpriteRenderer> ().enabled = false;
+	
+				pool [objectsToPool [i].name].Push (go);
+			}
+		}
+	}
+
+	//Spawn, or displace an existing hidden object at a particular position or rotation.
+	public Node Spawn (string objectName, Vector3 newPosition, Quaternion newRotation)
+	{
+		if (!pool.ContainsKey (objectName)) {
+			Debug.LogWarning ("No Pool For " + objectName + " Exists");
+			return null;
+		}
+	
+		if (pool [objectName].Count > 0) {
+			GameObject go = pool [objectName].Pop ();
+			go.transform.position = newPosition;
+			go.transform.rotation = newRotation;
+			go.SetActive (true);
+			//go.GetComponent<SpriteRenderer> ().enabled = true;
+			return go.GetComponent<Node> ();
+		} else {
+			Debug.LogWarning ("Reached Pool Limit : " + objectName);
+		}
+		return null;
+	}
+
+	// Despawn.
+	public void Despawn (GameObject objectToDespawn)
+	{
+		objectToDespawn.SetActive (false);
+		//objectToDespawn.GetComponent<SpriteRenderer> ().enabled = false;
+		pool [objectToDespawn.name].Push (objectToDespawn);
+	}
+}
