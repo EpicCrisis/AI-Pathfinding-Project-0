@@ -4,52 +4,61 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-	// This script is attached to the camera object!
+    // This script is attached to the camera object!
 
-	public GridManager game;
+    public GenerateGrid game;
 
-	public float cameraSpeed = 10.0f;
-	public float zoomSpeed = 8.0f;
+    public float cameraSpeed = 10.0f;
+    public float zoomSpeed = 8.0f;
 
-	void Start ()
-	{
-		
-	}
+    float clampRow0;
+    float clampCol0;
 
-	void Update ()
-	{
-		CameraMove ();
-	}
+    Vector3 newPos;
 
-	void CameraMove ()
-	{
-		float xMove = Input.GetAxis ("Horizontal");
-		float yMove = Input.GetAxis ("Vertical");
+    void Start()
+    {
+        newPos = transform.position;
+    }
 
-		Vector3 newPos = transform.position;
-		newPos.x += xMove * cameraSpeed * Time.deltaTime;
-		newPos.y += yMove * cameraSpeed * Time.deltaTime;
+    void Update()
+    {
+        CameraMove();
+    }
 
-		// Camera clamp to prevent over-offset.
-		newPos.x = Mathf.Clamp (newPos.x, 0.0f, (float)(game.gridSizeX - 1.0f));
-		newPos.y = Mathf.Clamp (newPos.y, 0.0f, (float)(game.gridSizeY - 1.0f));
+    void CameraMove()
+    {
+        float xMove = Input.GetAxis("Horizontal");
+        float yMove = Input.GetAxis("Vertical");
 
-		transform.position = newPos;
+        clampRow0 = game.row * game.padding;
+        clampCol0 = game.column * game.padding;
+        newPos.x += xMove * cameraSpeed * Time.deltaTime;
+        newPos.y += yMove * cameraSpeed * Time.deltaTime;
 
-		if (Input.GetAxis ("Mouse ScrollWheel") > 0) {
-			CameraZoom (zoomSpeed);
-		} else if (Input.GetAxis ("Mouse ScrollWheel") < 0) {
-			CameraZoom (-zoomSpeed);
-		}
-	}
+        // Camera clamp to prevent over-offset.
+        newPos.x = Mathf.Clamp(newPos.x, 0.0f, (float)(clampRow0 - 1.0f));
+        newPos.y = Mathf.Clamp(newPos.y, 0.0f, (float)(clampCol0 - 1.0f));
 
-	void CameraZoom (float zMove)
-	{
-		Vector3 newPos = transform.position;
-		newPos.z += zMove * Time.deltaTime;
+        transform.position = newPos;
 
-		newPos.z = Mathf.Clamp (newPos.z, (float)(-game.gridSizeX - game.gridSizeY), (float)((-game.gridSizeX - game.gridSizeY) / 10.0f));
+        if (Input.GetAxis("Mouse ScrollWheel") > 0)
+        {
+            CameraZoom(zoomSpeed);
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0)
+        {
+            CameraZoom(-zoomSpeed);
+        }
+    }
 
-		transform.position = newPos;
-	}
+    void CameraZoom(float zMove)
+    {
+        Vector3 newPos = transform.position;
+        newPos.z += zMove * Time.deltaTime;
+
+        newPos.z = Mathf.Clamp(newPos.z, (float)(-clampRow0 - clampCol0), (float)((-clampRow0 - clampCol0) / 10.0f));
+
+        transform.position = newPos;
+    }
 }

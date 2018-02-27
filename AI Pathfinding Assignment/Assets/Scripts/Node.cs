@@ -1,123 +1,68 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Sprites;
-using UnityEngine.UI;
 
 public class Node : MonoBehaviour
 {
-    public enum NodeState
+
+    [SerializeField] private float weight = int.MaxValue;
+    [SerializeField] private Transform parentNode = null;
+    [SerializeField] private List<Transform> neighbourNode;
+    [SerializeField] private bool walkable = true;
+
+    void Start()
     {
-        Walkable,
-        Unwalkable,
-        Settled,
-        Start,
-        End
+        this.resetNode();
     }
 
-    public int x;
-    public int y;
-
-    public NodeState state;
-    public NodeState nextState;
-
-    public SpriteRenderer sRender;
-
-    private void Awake()
+    public void resetNode()
     {
-        sRender = GetComponent<SpriteRenderer>();      
+        weight = int.MaxValue;
+        parentNode = null;
     }
 
-    public Node(int gridX, int gridY)
+    public void setParentNode(Transform node)
     {
-        gridX = x;
-        gridY = y;
+        this.parentNode = node;
     }
 
-    public int GetNeighbours()
+    public void setWeight(float value)
     {
-        int neighbours = 0;
-
-        for (int i = x - 1; x <= x + 1; i++)
-        {
-            for (int j = y - 1; y <= y + 1; j++)
-            {
-                if (GridManager.instance.nodes[i, j].state == NodeState.Walkable)
-                {
-                    neighbours++;
-                }
-            }
-        }
-
-        return neighbours;
+        this.weight = value;
     }
 
-    public void InitNode (int x, int y)
+    public void setWalkable(bool value)
     {
-        this.x = x;
-        this.y = y;
+        this.walkable = value;
     }
 
-    private void UpdateSprite()
+    public void addNeighbourNode(Transform node)
     {
-        if (state == NodeState.Walkable)
-        {
-            sRender.color = Color.white;
-        }
-        else
-        {
-            sRender.color = Color.gray;
-        }
+        this.neighbourNode.Add(node);
     }
 
-    public void ClearNode()
+    public List<Transform> getNeighbourNode()
     {
-        state = NodeState.Walkable;
-        UpdateSprite();
+        List<Transform> result = this.neighbourNode;
+        return result;
     }
 
-    public void NodeUpdate()
+    public float getWeight()
     {
-        int aliveCells = GetNeighbours();
+        float result = this.weight;
+        return result;
 
-        nextState = state;
-
-        if (state == NodeState.Walkable)
-        {
-            // Code for checking distance.
-        }
-        else
-        {
-            return;
-        }
     }
 
-    public void ApplyNodeUpdate()
+    public Transform getParentNode()
     {
-        state = nextState;
-        UpdateSprite();
+        Transform result = this.parentNode;
+        return result;
     }
 
-    void OnMouseOver()
+    public bool isWalkable()
     {
-        if (!UIHoverListener.isUIOverride)
-        {
-            //Debug.Log ("Mouse is over this cell");
-
-            if (Input.GetButton("Fire1"))
-            {
-                //Debug.Log ("LMB this object : " + this.transform);
-
-                state = NodeState.Unwalkable;
-                UpdateSprite();
-            }
-            else if (Input.GetButton("Fire2"))
-            {
-                //Debug.Log ("RMB this object : " + this.transform);
-
-                state = NodeState.Walkable;
-                UpdateSprite();
-            }
-        }
+        bool result = walkable;
+        return result;
     }
 }
