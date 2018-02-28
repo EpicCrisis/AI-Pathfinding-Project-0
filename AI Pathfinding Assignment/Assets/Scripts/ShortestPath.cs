@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class ShortestPath : MonoBehaviour
 {
     private GameObject[] nodes;
-    
+
     public List<Transform> findShortestPath(Transform start, Transform end)
     {
         nodes = GameObject.FindGameObjectsWithTag("Node");
@@ -18,7 +17,7 @@ public class ShortestPath : MonoBehaviour
         {
             result.Add(node);
             Node currentNode = node.GetComponent<Node>();
-            node = currentNode.getParentNode();
+            node = currentNode.GetParentNode();
         }
 
         // Reverse the list so that it will be from start to end.
@@ -37,55 +36,59 @@ public class ShortestPath : MonoBehaviour
         foreach (GameObject obj in nodes)
         {
             Node n = obj.GetComponent<Node>();
-            if (n.isWalkable())
+            if (n.IsWalkable())
             {
-                n.resetNode();
+                n.ResetNode();
                 unexplored.Add(obj.transform);
             }
         }
 
         // Set the starting node weight to 0;
         Node startNode = start.GetComponent<Node>();
-        startNode.setWeight(0);
+        startNode.SetWeight(0);
+
+        // Set the ending node weight to 0;
+        //Node endNode = start.GetComponent<Node>();
+        //endNode.SetWeight(0);
 
         while (unexplored.Count > 0)
         {
             // Sort the explored by their weight in ascending order.
-            unexplored.Sort((x, y) => x.GetComponent<Node>().getWeight().CompareTo(y.GetComponent<Node>().getWeight()));
+            unexplored.Sort((x, y) => x.GetComponent<Node>().GetWeight().CompareTo(y.GetComponent<Node>().GetWeight()));
 
             // Get the lowest weight in unexplored.
             Transform current = unexplored[0];
 
             // Note: This is used for games, as we just want to reduce computation, better way will be implementing A*
-            /*
+            
             // If we reach the end node, we will stop.
             if(current == end)
             {   
                 return end;
-            }*/
+            }
 
             //Remove the node, since we are exploring it now.
             unexplored.Remove(current);
 
             Node currentNode = current.GetComponent<Node>();
-            List<Transform> neighbours = currentNode.getNeighbourNode();
+            List<Transform> neighbours = currentNode.GetNeighbourNode();
             foreach (Transform neighNode in neighbours)
             {
                 Node node = neighNode.GetComponent<Node>();
 
                 // We want to avoid those that had been explored and is not walkable.
-                if (unexplored.Contains(neighNode) && node.isWalkable())
+                if (unexplored.Contains(neighNode) && node.IsWalkable())
                 {
                     // Get the distance of the object.
                     float distance = Vector3.Distance(neighNode.position, current.position);
-                    distance = currentNode.getWeight() + distance;
+                    distance = currentNode.GetWeight() + distance;
 
                     // If the added distance is less than the current weight.
-                    if (distance < node.getWeight())
+                    if (distance < node.GetWeight())
                     {
                         // We update the new distance as weight and update the new path now.
-                        node.setWeight(distance);
-                        node.setParentNode(current);
+                        node.SetWeight(distance);
+                        node.SetParentNode(current);
                     }
                 }
             }

@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class GenerateGrid : MonoBehaviour
+public class GenerateGridManager : MonoBehaviour
 {
 
     public int row = 5;
@@ -12,15 +11,15 @@ public class GenerateGrid : MonoBehaviour
 
     public List<Transform> grid = new List<Transform>();
 
-    public static GenerateGrid instance;
+    public static GenerateGridManager instance;
 
     void Start()
     {
-        this.generateGrid();
-        this.generateNeighbours();
+        this.GenerateGrid();
+        this.GenerateNeighbours();
     }
 
-    private void generateGrid()
+    private void GenerateGrid()
     {
         int counter = 0;
         for (int i = 0; i < row; i++)
@@ -36,7 +35,7 @@ public class GenerateGrid : MonoBehaviour
         }
     }
 
-    private void generateNeighbours()
+    private void GenerateNeighbours()
     {
         for (int i = 0; i < grid.Count; i++)
         {
@@ -49,14 +48,14 @@ public class GenerateGrid : MonoBehaviour
                 // We want the node at the top as long as there is a node.
                 if (i + column < column * row)
                 {
-                    currentNode.addNeighbourNode(grid[i + column]);   // North node
+                    currentNode.AddNeighbourNode(grid[i + column]);   // North node
                 }
 
                 if (i - column >= 0)
                 {
-                    currentNode.addNeighbourNode(grid[i - column]);   // South node
+                    currentNode.AddNeighbourNode(grid[i - column]);   // South node
                 }
-                currentNode.addNeighbourNode(grid[i + 1]);            // East node
+                currentNode.AddNeighbourNode(grid[i + 1]);            // East node
             }
             // For those on the right, with no right neighbours
             else if (index % column == 0)
@@ -64,29 +63,29 @@ public class GenerateGrid : MonoBehaviour
                 // We want the node at the top as long as there is a node.
                 if (i + column < column * row)
                 {
-                    currentNode.addNeighbourNode(grid[i + column]);   // North node
+                    currentNode.AddNeighbourNode(grid[i + column]);   // North node
                 }
 
                 if (i - column >= 0)
                 {
-                    currentNode.addNeighbourNode(grid[i - column]);   // South node
+                    currentNode.AddNeighbourNode(grid[i - column]);   // South node
                 }
-                currentNode.addNeighbourNode(grid[i - 1]);            // West node
+                currentNode.AddNeighbourNode(grid[i - 1]);            // West node
             }
             else
             {
                 // We want the node at the top as long as there is a node.
                 if (i + column < column * row)
                 {
-                    currentNode.addNeighbourNode(grid[i + column]);   // North node
+                    currentNode.AddNeighbourNode(grid[i + column]);   // North node
                 }
 
                 if (i - column >= 0)
                 {
-                    currentNode.addNeighbourNode(grid[i - column]);   // South node
+                    currentNode.AddNeighbourNode(grid[i - column]);   // South node
                 }
-                currentNode.addNeighbourNode(grid[i + 1]);            // East node
-                currentNode.addNeighbourNode(grid[i - 1]);            // West node
+                currentNode.AddNeighbourNode(grid[i + 1]);            // East node
+                currentNode.AddNeighbourNode(grid[i - 1]);            // West node
             }
         }
     }

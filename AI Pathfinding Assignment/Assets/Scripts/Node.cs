@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Node : MonoBehaviour
@@ -12,55 +11,55 @@ public class Node : MonoBehaviour
 
     void Start()
     {
-        this.resetNode();
+        this.ResetNode();
     }
 
-    public void resetNode()
+    public void ResetNode()
     {
         weight = int.MaxValue;
         parentNode = null;
     }
 
-    public void setParentNode(Transform node)
+    public void SetParentNode(Transform node)
     {
         this.parentNode = node;
     }
 
-    public void setWeight(float value)
+    public void SetWeight(float value)
     {
         this.weight = value;
     }
 
-    public void setWalkable(bool value)
+    public void SetWalkable(bool value)
     {
         this.walkable = value;
     }
 
-    public void addNeighbourNode(Transform node)
+    public void AddNeighbourNode(Transform node)
     {
         this.neighbourNode.Add(node);
     }
 
-    public List<Transform> getNeighbourNode()
+    public List<Transform> GetNeighbourNode()
     {
         List<Transform> result = this.neighbourNode;
         return result;
     }
 
-    public float getWeight()
+    public float GetWeight()
     {
         float result = this.weight;
         return result;
 
     }
 
-    public Transform getParentNode()
+    public Transform GetParentNode()
     {
         Transform result = this.parentNode;
         return result;
     }
 
-    public bool isWalkable()
+    public bool IsWalkable()
     {
         bool result = walkable;
         return result;

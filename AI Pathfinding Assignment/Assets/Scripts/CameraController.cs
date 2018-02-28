@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
     // This script is attached to the camera object!
 
-    public GenerateGrid game;
+    public GenerateGridManager game;
 
     public float cameraSpeed = 10.0f;
     public float zoomSpeed = 8.0f;
@@ -33,6 +31,7 @@ public class CameraController : MonoBehaviour
 
         clampRow0 = game.row * game.padding;
         clampCol0 = game.column * game.padding;
+
         newPos.x += xMove * cameraSpeed * Time.deltaTime;
         newPos.y += yMove * cameraSpeed * Time.deltaTime;
 
@@ -54,7 +53,6 @@ public class CameraController : MonoBehaviour
 
     void CameraZoom(float zMove)
     {
-        Vector3 newPos = transform.position;
         newPos.z += zMove * Time.deltaTime;
 
         newPos.z = Mathf.Clamp(newPos.z, (float)(-clampRow0 - clampCol0), (float)((-clampRow0 - clampCol0) / 10.0f));

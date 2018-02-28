@@ -12,16 +12,16 @@ public class MinHeap : MonoBehaviour
             this.node = node;
         }
 
-        public Transform getNode()
+        public Transform GetNode()
         {
             Transform result = this.node;
             return result;
         }
 
-        public float getWeight()
+        public float GetWeight()
         {
             Node n = node.GetComponent<Node>();
-            float result = n.getWeight();
+            float result = n.GetWeight();
             return result;
         }
     }
@@ -29,7 +29,7 @@ public class MinHeap : MonoBehaviour
     private List<BinaryNode> heap;
 
     // Creating the heap.
-    public void createHeap(Transform node)
+    public void CreateHeap(Transform node)
     {
         // Generate the heap list.
         heap = new List<BinaryNode>();
@@ -38,7 +38,7 @@ public class MinHeap : MonoBehaviour
         heap.Add(new BinaryNode(node));
     }
 
-    public void insert(Transform node)
+    public void Insert(Transform node)
     {
         // Create the node.
         BinaryNode bNode = new BinaryNode(node);
@@ -47,10 +47,10 @@ public class MinHeap : MonoBehaviour
         heap.Add(bNode);
 
         // Bubble up to sort the heap.
-        this.bubbleUp(heap.Count - 1);
+        this.BubbleUp(heap.Count - 1);
     }
 
-    public Transform extract()
+    public Transform Extract()
     {
         // Swap the root with the last time.
         BinaryNode temp = heap[heap.Count - 1];
@@ -58,22 +58,22 @@ public class MinHeap : MonoBehaviour
         heap[0] = temp;
 
         // Remove the last item from the heap.
-        Transform result = heap[heap.Count - 1].getNode();
+        Transform result = heap[heap.Count - 1].GetNode();
         heap.RemoveAt(heap.Count - 1);
 
         // Heapify the heap.
-        this.heapify(0);
+        this.Heapify(0);
 
         // Return the smallest node.
         return result;
     }
 
-    public bool isEmpty()
+    public bool IsEmpty()
     {
         return heap.Count == 0;
     }
 
-    private void bubbleUp(int index)
+    private void BubbleUp(int index)
     {
 
         if (index <= 0)
@@ -99,19 +99,18 @@ public class MinHeap : MonoBehaviour
         // We swap the position if the parent is bigger than the child.
         BinaryNode parentNode = heap[parent];
         BinaryNode node = heap[index];
-        if (parentNode.getWeight() > node.getWeight())
+        if (parentNode.GetWeight() > node.GetWeight())
         {
             BinaryNode temp = heap[index];
             heap[index] = parentNode;
             heap[parent] = temp;
 
-            this.bubbleUp(parent); // Continue bubble up if it's not the root node.
+            this.BubbleUp(parent); // Continue bubble up if it's not the root node.
 
         }
-
     }
 
-    private void heapify(int index)
+    private void Heapify(int index)
     {
         // Calculate the position for left and right node.
         int leftIndex = (2 * index) + 1;
@@ -119,12 +118,12 @@ public class MinHeap : MonoBehaviour
         int smallest = index;
 
         // Check if left child or right child has the smallest value.
-        if (leftIndex <= heap.Count - 1 && heap[leftIndex].getWeight() <= heap[smallest].getWeight())
+        if (leftIndex <= heap.Count - 1 && heap[leftIndex].GetWeight() <= heap[smallest].GetWeight())
         {
             smallest = leftIndex;
         }
 
-        if (rightIndex <= heap.Count - 1 && heap[rightIndex].getWeight() <= heap[smallest].getWeight())
+        if (rightIndex <= heap.Count - 1 && heap[rightIndex].GetWeight() <= heap[smallest].GetWeight())
         {
             smallest = rightIndex;
         }
@@ -136,7 +135,7 @@ public class MinHeap : MonoBehaviour
             heap[index] = heap[smallest];
             heap[smallest] = temp;
 
-            this.heapify(smallest);
+            this.Heapify(smallest);
         }
     }
 
@@ -146,7 +145,7 @@ public class MinHeap : MonoBehaviour
         int counter = 0;
         foreach (BinaryNode bNode in heap)
         {
-            print("index " + counter + " : " + bNode.getNode().name + " (Weight: " + bNode.getWeight() + ")");
+            print("index " + counter + " : " + bNode.GetNode().name + " (Weight: " + bNode.GetWeight() + ")");
             counter++;
         }
         print("==================================");
@@ -154,7 +153,7 @@ public class MinHeap : MonoBehaviour
 
     public Transform root()
     {
-        Transform result = heap[0].getNode();
+        Transform result = heap[0].GetNode();
         return result;
     }
 }

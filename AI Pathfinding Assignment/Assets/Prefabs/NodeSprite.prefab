@@ -21,8 +21,7 @@ GameObject:
   - component: {fileID: 4862637603415280}
   - component: {fileID: 212611908582403618}
   - component: {fileID: 114457263081468210}
-  - component: {fileID: 114509899930097214}
-  - component: {fileID: 65059015932776832}
+  - component: {fileID: 65683805226880690}
   m_Layer: 0
   m_Name: NodeSprite
   m_TagString: Node
@@ -43,7 +42,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &65059015932776832
+--- !u!65 &65683805226880690
 BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -70,18 +69,6 @@ MonoBehaviour:
   parentNode: {fileID: 0}
   neighbourNode: []
   walkable: 1
---- !u!114 &114509899930097214
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1455492670144070}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9aec6ec420c8fc84f84a1bfbd193d044, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  selection: 0
 --- !u!212 &212611908582403618
 SpriteRenderer:
   m_ObjectHideFlags: 1
