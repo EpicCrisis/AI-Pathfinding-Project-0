@@ -22,9 +22,9 @@ public class GenerateGridManager : MonoBehaviour
     private void GenerateGrid()
     {
         int counter = 0;
-        for (int i = 0; i < row; i++)
+        for (int i = 0; i < column; i++)
         {
-            for (int j = 0; j < column; j++)
+            for (int j = 0; j < row; j++)
             {
                 Transform node = Instantiate(nodePrefab, new Vector2(i * padding, j * padding), Quaternion.identity);
                 node.transform.parent = gameObject.transform;

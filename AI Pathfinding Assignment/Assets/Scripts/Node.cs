@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class Node : MonoBehaviour
 {
-
     [SerializeField] private float weight = int.MaxValue;
     [SerializeField] private Transform parentNode = null;
     [SerializeField] private List<Transform> neighbourNode;
     [SerializeField] private bool walkable = true;
+    [SerializeField] private bool isSelected = false;
 
     void Start()
     {
@@ -63,5 +63,16 @@ public class Node : MonoBehaviour
     {
         bool result = walkable;
         return result;
+    }
+
+    public bool IsSelected()
+    {
+        bool result = isSelected;
+        return result;
+    }
+
+    public void SetSelected(bool value)
+    {
+        this.isSelected = value;
     }
 }

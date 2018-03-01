@@ -4,10 +4,15 @@ using UnityEngine.SceneManagement;
 
 public class PlayerInput : MonoBehaviour
 {
-    private Transform node;
-    private Transform startNode;
-    private Transform endNode;
-    private List<Transform> blockPath = new List<Transform>();
+    [SerializeField] private Transform previousNode;
+    [SerializeField] private Transform node;
+    [SerializeField] private Transform startNode;
+    [SerializeField] private Transform endNode;
+    [SerializeField] private List<Transform> blockPath = new List<Transform>();
+    [SerializeField] private List<Transform> selectedNode = new List<Transform>();
+
+    [Header("SelectionPrefab")]
+    [SerializeField] private Transform selection;
     
     void Update()
     {
@@ -19,81 +24,61 @@ public class PlayerInput : MonoBehaviour
 
     private void MouseInput()
     {
-        if (Input.GetButton("Fire1"))
+        if (!UIHoverListener.isUIOverride)
         {
-            // Get the raycast from the mouse position from screen.
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit) && hit.transform.tag == "Node")
+            if (Input.GetButton("Fire1"))
             {
-                //unmark previous
-                SpriteRenderer sRend;
-                if (node != null)
+                // Get the raycast from the mouse position from screen.
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit) && hit.transform.tag == "Node")
                 {
-                    sRend = node.GetComponent<SpriteRenderer>();
-                    sRend.material.color = Color.white;
-                }
-
-                // We now update the selected node.
-                node = hit.transform;
-
-                // Mark it
-                sRend = node.GetComponent<SpriteRenderer>();
-                sRend.material.color = Color.green;
-            }
-        }
-        else if (Input.GetButtonDown("Fire2"))
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit) && hit.transform.tag == "Node")
-            {
-                node = hit.transform;
-
-                if (node != null)
-                {
-                    SpriteRenderer sRend = node.GetComponent<SpriteRenderer>();
+                    // We now update the selected node.
+                    node = hit.transform;
                     Node n = node.GetComponent<Node>();
+                    Transform nt = node.GetComponent<Transform>();
 
-                    if (n.IsWalkable())
+                    if (node != null)
                     {
-                        // Set selected node to not walkable
-                        n.SetWalkable(false);
-
-                        // Add the node to the block path list.
-                        blockPath.Add(node);
-
-                        // Render the selected node to black.
-                        sRend.material.color = Color.black;
-
-                        // If the block path is start node, we remove start node.
-                        if (node == startNode)
+                        // Mark selection
+                        if (!n.IsSelected())
                         {
-                            startNode = null;
+                            Transform tempSelect = Instantiate(selection, node.transform.position, Quaternion.identity);
+                            tempSelect.transform.parent = n.transform;
+                            selectedNode.Add(nt);
+                            n.SetSelected(true);
                         }
-
-                        // If the block path is end node, we remove end node.
-                        if (node == endNode)
-                        {
-                            endNode = null;
-                        }
-
-                        node = null;
                     }
-                    else if (!n.IsWalkable())
+                    
+                    // When selecting a node, check which type of node is being clicked
+                    // Save selected node in a temp node, check for changes in current selected
+                    // Replace newly selected with temp node, repeat when there are changes
+                }
+            }
+            else if (Input.GetButton("Fire2"))
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit) && hit.transform.tag == "Node")
+                {
+                    // We now update the selected node.
+                    node = hit.transform;
+                    Node n = node.GetComponent<Node>();
+                    Transform nt = node.GetComponent<Transform>();
+
+                    if (node != null)
                     {
-                        // Set selected node to not walkable
-                        n.SetWalkable(true);
-
-                        // Add the node to the block path list.
-                        blockPath.Remove(node);
-
-                        // Render the selected node to black.
-                        sRend.material.color = Color.white;
-
-                        node = null;
+                        // Remove selection
+                        if (n.IsSelected())
+                        {
+                            SelectionComponent tempSelect = n.GetComponentInChildren<SelectionComponent>();
+                            Destroy(tempSelect.gameObject);
+                            selectedNode.Remove(nt);
+                            n.SetSelected(false);
+                            node = null;
+                        }
                     }
                 }
             }
@@ -107,7 +92,7 @@ public class PlayerInput : MonoBehaviour
             Node n = node.GetComponent<Node>();
 
             // Making sure only walkable node are able to set as start.
-            if (n.IsWalkable())
+            if (n.IsWalkable() && node != endNode && node != startNode)
             {
                 // If this is a new start node, we will just set it to blue.
                 if (startNode == null)
@@ -127,9 +112,21 @@ public class PlayerInput : MonoBehaviour
                 }
 
                 startNode = node;
-                node = null;
             }
         }
+
+        foreach (Transform sn in selectedNode)
+        {
+            SelectionComponent tempSelect = sn.GetComponentInChildren<SelectionComponent>();
+            Destroy(tempSelect.gameObject);
+
+            Node n = sn.GetComponent<Node>();
+            n.SetSelected(false);
+        }
+
+        node = null;
+
+        selectedNode.Clear();
     }
 
     public void BtnEndNode()
@@ -139,10 +136,10 @@ public class PlayerInput : MonoBehaviour
             Node n = node.GetComponent<Node>();
 
             // Making sure only walkable node are able to set as end.
-            if (n.IsWalkable())
+            if (n.IsWalkable() && node != startNode && node != endNode)
             {
                 // If this is a new end node, we will just set it to cyan.
-                if (endNode == null && n != startNode)
+                if (endNode == null)
                 {
                     SpriteRenderer sRend = node.GetComponent<SpriteRenderer>();
                     sRend.material.color = Color.cyan;
@@ -159,9 +156,21 @@ public class PlayerInput : MonoBehaviour
                 }
 
                 endNode = node;
-                node = null;
             }
         }
+
+        foreach (Transform sn in selectedNode)
+        {
+            SelectionComponent tempSelect = sn.GetComponentInChildren<SelectionComponent>();
+            Destroy(tempSelect.gameObject);
+
+            Node n = sn.GetComponent<Node>();
+            n.SetSelected(false);
+        }
+
+        node = null;
+
+        selectedNode.Clear();
     }
 
     public void BtnFindPath()
@@ -171,7 +180,7 @@ public class PlayerInput : MonoBehaviour
         {
             // Execute Shortest Path.
             ShortestPath finder = gameObject.GetComponent<ShortestPath>();
-            List<Transform> paths = finder.findShortestPath(startNode, endNode);
+            List<Transform> paths = finder.FindShortestPath(startNode, endNode);
 
             // Colour the node red.
             foreach (Transform path in paths)
@@ -184,52 +193,78 @@ public class PlayerInput : MonoBehaviour
 
     public void BtnBlockPath()
     {
-        if (node != null)
+        // Check all selections
+        foreach (Transform sn in selectedNode)
         {
-            // Render the selected node to black.
-            SpriteRenderer sRend = node.GetComponent<SpriteRenderer>();
+            Node n = sn.GetComponent<Node>();
+
+            SpriteRenderer sRend = sn.GetComponent<SpriteRenderer>();
             sRend.material.color = Color.black;
 
-            // Set selected node to not walkable
-            Node n = node.GetComponent<Node>();
             n.SetWalkable(false);
 
-            // Add the node to the block path list.
-            blockPath.Add(node);
+            if (!blockPath.Contains(sn))
+            {
+                blockPath.Add(sn);
+            }
+            
+            if (node == startNode)
+            {
+                startNode = null;
+            }
+            
+            if (node == endNode)
+            {
+                endNode = null;
+            }
+            
+            SelectionComponent tempSelect = sn.GetComponentInChildren<SelectionComponent>();
+            Destroy(tempSelect.gameObject);
 
-            // If the block path is start node, we remove start node.
+            n.SetSelected(false);
+        }
+
+        node = null;
+
+        selectedNode.Clear();
+    }
+
+    public void BtnUnblockPath()
+    {
+        // For multiple selections
+        foreach (Transform sn in selectedNode)
+        {
+            Node n = sn.GetComponent<Node>();
+
+            SpriteRenderer sRend = sn.GetComponent<SpriteRenderer>();
+            sRend.material.color = Color.white;
+
+            n.SetWalkable(true);
+
+            if (blockPath.Contains(sn))
+            {
+                blockPath.Remove(sn);
+            }
+
             if (node == startNode)
             {
                 startNode = null;
             }
 
-            // If the block path is end node, we remove end node.
             if (node == endNode)
             {
                 endNode = null;
             }
 
-            node = null;
+            SelectionComponent tempSelect = sn.GetComponentInChildren<SelectionComponent>();
+            Destroy(tempSelect.gameObject);
+
+            n.SetSelected(false);
         }
-    }
 
-    public void BtnUnblockPath()
-    {
-        if (node != null)
-        {
-            // Set selected node to white.
-            SpriteRenderer sRend = node.GetComponent<SpriteRenderer>();
-            sRend.material.color = Color.white;
+        node = null;
 
-            // Set selected not to walkable.
-            Node n = node.GetComponent<Node>();
-            n.SetWalkable(true);
-
-            // Remove selected node from the block path list.
-            blockPath.Remove(node);
-
-            node = null;
-        }
+        selectedNode.Clear();
     }
 
     public void BtnClearBlock()

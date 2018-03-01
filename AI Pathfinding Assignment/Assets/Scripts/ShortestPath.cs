@@ -5,7 +5,7 @@ public class ShortestPath : MonoBehaviour
 {
     private GameObject[] nodes;
 
-    public List<Transform> findShortestPath(Transform start, Transform end)
+    public List<Transform> FindShortestPath(Transform start, Transform end)
     {
         nodes = GameObject.FindGameObjectsWithTag("Node");
 
