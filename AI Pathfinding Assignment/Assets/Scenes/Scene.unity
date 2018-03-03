@@ -997,8 +997,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d57adb25a7d69cf4eb6fc6d053490ab7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  row: 20
-  column: 20
+  row: 5
+  column: 5
   padding: 1.5
   nodePrefab: {fileID: 4862637603415280, guid: 59652be7fe64139459eecc3a2470456d, type: 2}
   grid: []

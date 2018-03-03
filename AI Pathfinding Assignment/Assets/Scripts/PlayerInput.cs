@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class PlayerInput : MonoBehaviour
 {
-    [SerializeField] private Transform previousNode;
     [SerializeField] private Transform node;
     [SerializeField] private Transform startNode;
     [SerializeField] private Transform endNode;
@@ -77,8 +76,8 @@ public class PlayerInput : MonoBehaviour
                             Destroy(tempSelect.gameObject);
                             selectedNode.Remove(nt);
                             n.SetSelected(false);
-                            node = null;
                         }
+                        node = null;
                     }
                 }
             }
@@ -87,7 +86,7 @@ public class PlayerInput : MonoBehaviour
 
     public void BtnStartNode()
     {
-        if (node != null)
+        /*if (node != null)
         {
             Node n = node.GetComponent<Node>();
 
@@ -113,14 +112,37 @@ public class PlayerInput : MonoBehaviour
 
                 startNode = node;
             }
-        }
+        }*/
 
         foreach (Transform sn in selectedNode)
         {
+            Node n = sn.GetComponent<Node>();
+            if (!selectedNode.Contains(startNode))
+            {
+                if (n.IsWalkable() && sn != endNode && sn != startNode)
+                {
+                    if (startNode == null)
+                    {
+                        SpriteRenderer sRend = sn.GetComponent<SpriteRenderer>();
+                        sRend.material.color = Color.blue;
+                    }
+                    else
+                    {
+                        // Reverse the color of the previous node
+                        SpriteRenderer sRend = startNode.GetComponent<SpriteRenderer>();
+                        sRend.material.color = Color.white;
+
+                        // Set the new node as blue.
+                        sRend = sn.GetComponent<SpriteRenderer>();
+                        sRend.material.color = Color.blue;
+                    }
+                    
+                    startNode = sn;
+                }
+            }
             SelectionComponent tempSelect = sn.GetComponentInChildren<SelectionComponent>();
             Destroy(tempSelect.gameObject);
-
-            Node n = sn.GetComponent<Node>();
+            
             n.SetSelected(false);
         }
 
@@ -131,7 +153,7 @@ public class PlayerInput : MonoBehaviour
 
     public void BtnEndNode()
     {
-        if (node != null)
+        /*if (node != null)
         {
             Node n = node.GetComponent<Node>();
 
@@ -157,14 +179,38 @@ public class PlayerInput : MonoBehaviour
 
                 endNode = node;
             }
-        }
+        }*/
 
         foreach (Transform sn in selectedNode)
         {
+            Node n = sn.GetComponent<Node>();
+            if (!selectedNode.Contains(endNode))
+            {
+                if (n.IsWalkable() && sn != startNode && sn != endNode)
+                {
+                    // If this is a new end node, we will just set it to cyan.
+                    if (endNode == null)
+                    {
+                        SpriteRenderer sRend = sn.GetComponent<SpriteRenderer>();
+                        sRend.material.color = Color.cyan;
+                    }
+                    else
+                    {
+                        // Reverse the color of the previous node
+                        SpriteRenderer sRend = endNode.GetComponent<SpriteRenderer>();
+                        sRend.material.color = Color.white;
+
+                        // Set the new node as cyan.
+                        sRend = sn.GetComponent<SpriteRenderer>();
+                        sRend.material.color = Color.cyan;
+                    }
+
+                    endNode = sn;
+                }
+            }
             SelectionComponent tempSelect = sn.GetComponentInChildren<SelectionComponent>();
             Destroy(tempSelect.gameObject);
 
-            Node n = sn.GetComponent<Node>();
             n.SetSelected(false);
         }
 
