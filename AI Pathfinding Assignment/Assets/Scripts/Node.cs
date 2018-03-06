@@ -14,6 +14,11 @@ public class Node : MonoBehaviour
         this.ResetNode();
     }
 
+    public void SetNeighbourNode(List<Transform> list)
+    {
+        this.neighbourNode = list;
+    }
+
     public void ResetNode()
     {
         weight = int.MaxValue;

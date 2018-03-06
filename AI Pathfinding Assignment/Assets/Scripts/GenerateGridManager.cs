@@ -8,12 +8,24 @@ public class GenerateGridManager : MonoBehaviour
     public int column = 5;
     public float padding = 3f;
     public Transform nodePrefab;
+    [SerializeField] private bool enableDiagonal = false;
 
     public List<Transform> grid = new List<Transform>();
 
     public static GenerateGridManager instance;
 
     void Start()
+    {
+        GridInit();
+    }
+
+    public void SetDiagonal(bool value)
+    {
+        this.enableDiagonal = value;
+        this.GenerateNeighbours();
+    }
+
+    private void GridInit()
     {
         this.GenerateGrid();
         this.GenerateNeighbours();
@@ -40,6 +52,7 @@ public class GenerateGridManager : MonoBehaviour
         for (int i = 0; i < grid.Count; i++)
         {
             Node currentNode = grid[i].GetComponent<Node>();
+            currentNode.GetNeighbourNode().Clear();
             int index = i + 1;
 
             // For those on the left, with no left neighbours
@@ -50,17 +63,21 @@ public class GenerateGridManager : MonoBehaviour
                 {
                     currentNode.AddNeighbourNode(grid[i + column]);         // North node
                 }
-                if (i + column + 1 < column * row)
-                {
-                    currentNode.AddNeighbourNode(grid[i + column + 1]);     // North-East node
-                }
                 if (i - column >= 0)
                 {
                     currentNode.AddNeighbourNode(grid[i - column]);         // South node
                 }
-                if (i - column + 1 >= 0)
+
+                if (enableDiagonal)
                 {
-                    currentNode.AddNeighbourNode(grid[i - column + 1]);     // South-East node
+                    if (i + column + 1 < column * row)
+                    {
+                        currentNode.AddNeighbourNode(grid[i + column + 1]);     // North-East node
+                    }
+                    if (i - column + 1 >= 0)
+                    {
+                        currentNode.AddNeighbourNode(grid[i - column + 1]);     // South-East node
+                    }
                 }
 
                 currentNode.AddNeighbourNode(grid[i + 1]);                  // East node
@@ -73,17 +90,21 @@ public class GenerateGridManager : MonoBehaviour
                 {
                     currentNode.AddNeighbourNode(grid[i + column]);         // North node
                 }
-                if (i + column - 1 < column * row)
-                {
-                    currentNode.AddNeighbourNode(grid[i + column - 1]);     // North-West node
-                }
                 if (i - column >= 0)
                 {
                     currentNode.AddNeighbourNode(grid[i - column]);         // South node
                 }
-                if (i - column - 1 >= 0)
+
+                if (enableDiagonal)
                 {
-                    currentNode.AddNeighbourNode(grid[i - column - 1]);     // South-West node
+                    if (i + column - 1 < column * row)
+                    {
+                        currentNode.AddNeighbourNode(grid[i + column - 1]);     // North-West node
+                    }
+                    if (i - column - 1 >= 0)
+                    {
+                        currentNode.AddNeighbourNode(grid[i - column - 1]);     // South-West node
+                    }
                 }
 
                 currentNode.AddNeighbourNode(grid[i - 1]);                  // West node
@@ -95,26 +116,29 @@ public class GenerateGridManager : MonoBehaviour
                 {
                     currentNode.AddNeighbourNode(grid[i + column]);         // North node
                 }
-                if (i + column + 1 < column * row)
-                {
-                    currentNode.AddNeighbourNode(grid[i + column + 1]);     // North-East node
-                }
-                if (i + column - 1 < column * row)
-                {
-                    currentNode.AddNeighbourNode(grid[i + column - 1]);     // North-West node
-                }
-
                 if (i - column >= 0)
                 {
                     currentNode.AddNeighbourNode(grid[i - column]);         // South node
                 }
-                if (i - column + 1 >= 0)
+
+                if (enableDiagonal)
                 {
-                    currentNode.AddNeighbourNode(grid[i - column + 1]);     // South-East node
-                }
-                if (i - column - 1 >= 0)
-                {
-                    currentNode.AddNeighbourNode(grid[i - column - 1]);     // South-West node
+                    if (i + column + 1 < column * row)
+                    {
+                        currentNode.AddNeighbourNode(grid[i + column + 1]);     // North-East node
+                    }
+                    if (i + column - 1 < column * row)
+                    {
+                        currentNode.AddNeighbourNode(grid[i + column - 1]);     // North-West node
+                    }
+                    if (i - column + 1 >= 0)
+                    {
+                        currentNode.AddNeighbourNode(grid[i - column + 1]);     // South-East node
+                    }
+                    if (i - column - 1 >= 0)
+                    {
+                        currentNode.AddNeighbourNode(grid[i - column - 1]);     // South-West node
+                    }
                 }
 
                 currentNode.AddNeighbourNode(grid[i + 1]);                  // East node

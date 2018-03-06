@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerInput : MonoBehaviour
 {
@@ -153,34 +154,6 @@ public class PlayerInput : MonoBehaviour
 
     public void BtnEndNode()
     {
-        /*if (node != null)
-        {
-            Node n = node.GetComponent<Node>();
-
-            // Making sure only walkable node are able to set as end.
-            if (n.IsWalkable() && node != startNode && node != endNode)
-            {
-                // If this is a new end node, we will just set it to cyan.
-                if (endNode == null)
-                {
-                    SpriteRenderer sRend = node.GetComponent<SpriteRenderer>();
-                    sRend.material.color = Color.cyan;
-                }
-                else
-                {
-                    // Reverse the color of the previous node
-                    SpriteRenderer sRend = endNode.GetComponent<SpriteRenderer>();
-                    sRend.material.color = Color.white;
-
-                    // Set the new node as cyan.
-                    sRend = node.GetComponent<SpriteRenderer>();
-                    sRend.material.color = Color.cyan;
-                }
-
-                endNode = node;
-            }
-        }*/
-
         foreach (Transform sn in selectedNode)
         {
             Node n = sn.GetComponent<Node>();
@@ -228,6 +201,18 @@ public class PlayerInput : MonoBehaviour
             ShortestPath finder = gameObject.GetComponent<ShortestPath>();
             List<Transform> paths = finder.FindShortestPath(startNode, endNode);
 
+            // Reset the colors created by the path.
+            GenerateGridManager gridManager = gameObject.GetComponent<GenerateGridManager>();
+            for (int i = 0; i < gridManager.grid.Count; ++i)
+            {
+                Node currentNode = gridManager.grid[i].GetComponent<Node>();
+                SpriteRenderer sRend = currentNode.GetComponent<SpriteRenderer>();
+                if (currentNode != startNode || currentNode != endNode || !currentNode.IsWalkable())
+                {
+                    sRend.material.color = Color.white;
+                }
+            }
+
             // Colour the node red.
             foreach (Transform path in paths)
             {
@@ -243,27 +228,29 @@ public class PlayerInput : MonoBehaviour
         foreach (Transform sn in selectedNode)
         {
             Node n = sn.GetComponent<Node>();
-
-            SpriteRenderer sRend = sn.GetComponent<SpriteRenderer>();
-            sRend.material.color = Color.black;
-
-            n.SetWalkable(false);
-
+            
             if (!blockPath.Contains(sn))
             {
                 blockPath.Add(sn);
             }
-            
-            if (node == startNode)
+
+            if (sn == startNode)
             {
                 startNode = null;
             }
-            
-            if (node == endNode)
+            if (sn == endNode)
             {
                 endNode = null;
             }
             
+            SpriteRenderer sRend = sn.GetComponent<SpriteRenderer>();
+            sRend.material.color = Color.black;
+
+            if (sn != startNode && sn != endNode)
+            {
+                n.SetWalkable(false);
+            }
+
             SelectionComponent tempSelect = sn.GetComponentInChildren<SelectionComponent>();
             Destroy(tempSelect.gameObject);
 
@@ -335,6 +322,13 @@ public class PlayerInput : MonoBehaviour
     {
         Scene loadedLevel = SceneManager.GetActiveScene();
         SceneManager.LoadScene(loadedLevel.buildIndex);
+    }
+
+    public void BtnDiagonal(Toggle value)
+    {
+        GenerateGridManager generate = gameObject.GetComponent<GenerateGridManager>();
+
+        generate.SetDiagonal(value.isOn);
     }
 
     private void ColorBlockPath()
