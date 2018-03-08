@@ -197,22 +197,23 @@ public class PlayerInput : MonoBehaviour
         // Only find if there are start and end node.
         if (startNode != null && endNode != null)
         {
-            // Execute Shortest Path.
-            ShortestPath finder = gameObject.GetComponent<ShortestPath>();
-            List<Transform> paths = finder.FindShortestPath(startNode, endNode);
-
             // Reset the colors created by the path.
             GenerateGridManager gridManager = gameObject.GetComponent<GenerateGridManager>();
             for (int i = 0; i < gridManager.grid.Count; ++i)
             {
                 Node currentNode = gridManager.grid[i].GetComponent<Node>();
                 SpriteRenderer sRend = currentNode.GetComponent<SpriteRenderer>();
-                if (currentNode != startNode || currentNode != endNode || !currentNode.IsWalkable())
+                if (currentNode != startNode || currentNode != endNode || currentNode.IsWalkable())
                 {
+                    currentNode.SetWeight(int.MaxValue);
                     sRend.material.color = Color.white;
                 }
             }
 
+            // Execute Shortest Path.
+            ShortestPath finder = gameObject.GetComponent<ShortestPath>();
+            List<Transform> paths = finder.FindShortestPath(startNode, endNode);
+            
             // Colour the node red.
             foreach (Transform path in paths)
             {
@@ -329,6 +330,13 @@ public class PlayerInput : MonoBehaviour
         GenerateGridManager generate = gameObject.GetComponent<GenerateGridManager>();
 
         generate.SetDiagonal(value.isOn);
+    }
+
+    public void AlgoType(Dropdown _value)
+    {
+        ShortestPath path = gameObject.GetComponent<ShortestPath>();
+
+        path.algorithm = (ShortestPath.AlgoType)_value.value;
     }
 
     private void ColorBlockPath()

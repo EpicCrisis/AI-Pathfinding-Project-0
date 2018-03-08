@@ -5,12 +5,41 @@ public class ShortestPath : MonoBehaviour
 {
     private GameObject[] nodes;
 
+    [SerializeField] private bool startPathCount = false;
+    [SerializeField] private float counter;
+    [SerializeField] private float interval = 0.2f;
+
+    public enum AlgoType
+    {
+        Dijkstra = 0,
+        AStar = 1
+    }
+
+    public AlgoType algorithm;
+
+    private void Update()
+    {
+        if (startPathCount)
+        {
+            counter += Time.deltaTime;
+        }
+    }
+
     public List<Transform> FindShortestPath(Transform start, Transform end)
     {
         nodes = GameObject.FindGameObjectsWithTag("Node");
 
         List<Transform> result = new List<Transform>();
-        Transform node = AStarAlgo(start, end);
+        Transform node = null;
+
+        if (algorithm == AlgoType.Dijkstra)
+        {
+            node = DijkstrasAlgo(start, end);
+        }
+        else if (algorithm == AlgoType.AStar)
+        {
+            node = AStarAlgo(start, end);
+        }
 
         // While there's still previous node, we will continue.
         while (node != null)
@@ -60,20 +89,23 @@ public class ShortestPath : MonoBehaviour
             Transform current = unexplored[0];
 
             // Note: This is used for games, as we just want to reduce computation, better way will be implementing A*
-            
+
             // If we reach the end node, we will stop.
-            if(current == end)
-            {   
+            if (current == end)
+            {
                 return end;
             }
 
             //Remove the node, since we are exploring it now.
             unexplored.Remove(current);
+            SpriteRenderer sRend = current.GetComponent<SpriteRenderer>();
+            sRend.material.color = Color.yellow;
 
             Node currentNode = current.GetComponent<Node>();
             List<Transform> neighbours = currentNode.GetNeighbourNode();
             foreach (Transform neighNode in neighbours)
             {
+                counter = 0;
                 Node node = neighNode.GetComponent<Node>();
 
                 // We want to avoid those that had been explored and is not walkable.
@@ -145,7 +177,9 @@ public class ShortestPath : MonoBehaviour
 
             //Remove the node, since we are exploring it now.
             unexplored.Remove(current);
-            
+            SpriteRenderer sRend = current.GetComponent<SpriteRenderer>();
+            sRend.material.color = Color.yellow;
+
             Node currentNode = current.GetComponent<Node>();
             List<Transform> neighbours = currentNode.GetNeighbourNode();
             foreach (Transform neighNode in neighbours)
@@ -156,7 +190,7 @@ public class ShortestPath : MonoBehaviour
                 if (unexplored.Contains(neighNode) && node.IsWalkable())
                 {
                     // Get the distance of the object.
-                    float distance = Vector2.Distance(neighNode.position, current.position) + Vector2.Distance(neighNode.position, end.position);
+                    float distance = Vector2.Distance(neighNode.position, current.position) + Vector2.Distance(neighNode.position, end.position) + Vector2.Distance(neighNode.position, start.position);
                     distance = currentNode.GetWeight() + distance;
 
                     // If the added distance is less than the current weight.
