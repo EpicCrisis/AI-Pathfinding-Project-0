@@ -8,7 +8,7 @@ public class Node : MonoBehaviour
     [SerializeField] private List<Transform> neighbourNode;
     [SerializeField] private bool walkable = true;
     [SerializeField] private bool isSelected = false;
-
+    
     void Start()
     {
         this.ResetNode();
@@ -55,7 +55,6 @@ public class Node : MonoBehaviour
     {
         float result = this.weight;
         return result;
-
     }
 
     public Transform GetParentNode()

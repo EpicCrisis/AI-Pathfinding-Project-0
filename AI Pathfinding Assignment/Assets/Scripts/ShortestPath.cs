@@ -10,7 +10,7 @@ public class ShortestPath : MonoBehaviour
         nodes = GameObject.FindGameObjectsWithTag("Node");
 
         List<Transform> result = new List<Transform>();
-        Transform node = DijkstrasAlgo(start, end);
+        Transform node = AStarAlgo(start, end);
 
         // While there's still previous node, we will continue.
         while (node != null)
@@ -145,7 +145,7 @@ public class ShortestPath : MonoBehaviour
 
             //Remove the node, since we are exploring it now.
             unexplored.Remove(current);
-
+            
             Node currentNode = current.GetComponent<Node>();
             List<Transform> neighbours = currentNode.GetNeighbourNode();
             foreach (Transform neighNode in neighbours)
@@ -156,7 +156,7 @@ public class ShortestPath : MonoBehaviour
                 if (unexplored.Contains(neighNode) && node.IsWalkable())
                 {
                     // Get the distance of the object.
-                    float distance = Vector2.Distance(neighNode.position, current.position);
+                    float distance = Vector2.Distance(neighNode.position, current.position) + Vector2.Distance(neighNode.position, end.position);
                     distance = currentNode.GetWeight() + distance;
 
                     // If the added distance is less than the current weight.
