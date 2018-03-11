@@ -11,9 +11,15 @@ public class PlayerInput : MonoBehaviour
     [SerializeField] private List<Transform> blockPath = new List<Transform>();
     [SerializeField] private List<Transform> selectedNode = new List<Transform>();
 
-    [Header("SelectionPrefab")]
     [SerializeField] private Transform selection;
-    
+
+    //ObjectPooler objectPooler;
+
+    private void Start()
+    {
+        //objectPooler = ObjectPooler.instance;
+    }
+
     void Update()
     {
         MouseInput();
@@ -44,8 +50,10 @@ public class PlayerInput : MonoBehaviour
                         // Mark selection
                         if (!n.IsSelected())
                         {
+                            //GameObject tempSelect = objectPooler.SpawnFromPool("Selection", node.transform.position, Quaternion.identity);
+
                             Transform tempSelect = Instantiate(selection, node.transform.position, Quaternion.identity);
-                            tempSelect.transform.parent = n.transform;
+                            tempSelect.parent = n.transform;
                             selectedNode.Add(nt);
                             n.SetSelected(true);
                         }
@@ -213,7 +221,8 @@ public class PlayerInput : MonoBehaviour
             // Execute Shortest Path.
             ShortestPath finder = gameObject.GetComponent<ShortestPath>();
             List<Transform> paths = finder.FindShortestPath(startNode, endNode);
-            
+            finder.StartPathCount(true);
+
             // Colour the node red.
             foreach (Transform path in paths)
             {

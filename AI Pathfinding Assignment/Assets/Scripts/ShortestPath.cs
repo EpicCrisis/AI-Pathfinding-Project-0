@@ -8,7 +8,7 @@ public class ShortestPath : MonoBehaviour
     [SerializeField] private bool startPathCount = false;
     [SerializeField] private float counter;
     [SerializeField] private float interval = 0.2f;
-
+    
     public enum AlgoType
     {
         Dijkstra = 0,
@@ -16,6 +16,11 @@ public class ShortestPath : MonoBehaviour
     }
 
     public AlgoType algorithm;
+
+    public void StartPathCount(bool value)
+    {
+        this.startPathCount = value;
+    }
 
     private void Update()
     {
@@ -93,11 +98,13 @@ public class ShortestPath : MonoBehaviour
             // If we reach the end node, we will stop.
             if (current == end)
             {
+                startPathCount = false;
                 return end;
             }
 
             //Remove the node, since we are exploring it now.
             unexplored.Remove(current);
+
             SpriteRenderer sRend = current.GetComponent<SpriteRenderer>();
             sRend.material.color = Color.yellow;
 
@@ -174,12 +181,13 @@ public class ShortestPath : MonoBehaviour
             {
                 return end;
             }
-
+            
             //Remove the node, since we are exploring it now.
             unexplored.Remove(current);
+
             SpriteRenderer sRend = current.GetComponent<SpriteRenderer>();
             sRend.material.color = Color.yellow;
-
+            
             Node currentNode = current.GetComponent<Node>();
             List<Transform> neighbours = currentNode.GetNeighbourNode();
             foreach (Transform neighNode in neighbours)

@@ -14,8 +14,12 @@ public class GenerateGridManager : MonoBehaviour
 
     public static GenerateGridManager instance;
 
+    //ObjectPooler objectPooler;
+
     void Start()
     {
+        //objectPooler = ObjectPooler.instance;
+
         GridInit();
     }
 
@@ -38,8 +42,11 @@ public class GenerateGridManager : MonoBehaviour
         {
             for (int j = 0; j < column; j++)
             {
+                //GameObject node = objectPooler.SpawnFromPool("Node", new Vector2(j * padding, i * padding), Quaternion.identity);
+                //Transform n = node.GetComponent<Transform>();
+
                 Transform node = Instantiate(nodePrefab, new Vector2(j * padding, i * padding), Quaternion.identity);
-                node.transform.parent = gameObject.transform;
+                node.parent = transform;
                 node.name = "node (" + counter + ")";
                 grid.Add(node);
                 counter++;
