@@ -205,6 +205,11 @@ public class PlayerInput : MonoBehaviour
         // Only find if there are start and end node.
         if (startNode != null && endNode != null)
         {
+            // Execute Shortest Path.
+            ShortestPath finder = gameObject.GetComponent<ShortestPath>();
+
+            finder.ResetAnimation();
+
             // Reset the colors created by the path.
             GenerateGridManager gridManager = gameObject.GetComponent<GenerateGridManager>();
             for (int i = 0; i < gridManager.grid.Count; ++i)
@@ -218,17 +223,16 @@ public class PlayerInput : MonoBehaviour
                 }
             }
 
-            // Execute Shortest Path.
-            ShortestPath finder = gameObject.GetComponent<ShortestPath>();
-            List<Transform> paths = finder.FindShortestPath(startNode, endNode);
-            finder.StartPathCount(true);
+            finder.FindShortestPath(startNode, endNode);
+
+            finder.StartExploreCount(true);
 
             // Colour the node red.
-            foreach (Transform path in paths)
-            {
-                SpriteRenderer sRend = path.GetComponent<SpriteRenderer>();
-                sRend.material.color = Color.red;
-            }
+            //foreach (Transform path in paths)
+            //{
+            //    SpriteRenderer sRend = path.GetComponent<SpriteRenderer>();
+            //    sRend.material.color = Color.red;
+            //}
         }
     }
 
@@ -330,6 +334,8 @@ public class PlayerInput : MonoBehaviour
 
     public void BtnRestart()
     {
+        Time.timeScale = 1;
+
         Scene loadedLevel = SceneManager.GetActiveScene();
         SceneManager.LoadScene(loadedLevel.buildIndex);
     }
@@ -339,6 +345,11 @@ public class PlayerInput : MonoBehaviour
         GenerateGridManager generate = gameObject.GetComponent<GenerateGridManager>();
 
         generate.SetDiagonal(value.isOn);
+    }
+
+    public void BtnPathSpeed(Slider _value)
+    {
+        Time.timeScale = _value.value;
     }
 
     public void AlgoType(Dropdown _value)

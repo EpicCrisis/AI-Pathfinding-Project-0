@@ -5,9 +5,19 @@ public class ShortestPath : MonoBehaviour
 {
     private GameObject[] nodes;
 
+    [SerializeField] private bool startExploreCount = false;
     [SerializeField] private bool startPathCount = false;
+
     [SerializeField] private float counter;
-    [SerializeField] private float interval = 0.2f;
+
+    [SerializeField] private float exploreInterval = 0.2f;
+    [SerializeField] private float pathInterval = 0.2f;
+
+    [SerializeField] private int exploreCounter;
+    [SerializeField] private int resultCounter;
+
+    [SerializeField] private List<Transform> explored;
+    [SerializeField] private List<Transform> result;
     
     public enum AlgoType
     {
@@ -17,6 +27,23 @@ public class ShortestPath : MonoBehaviour
 
     public AlgoType algorithm;
 
+    //Reset the animation values on button press.
+    public void ResetAnimation()
+    {
+        this.startExploreCount = false;
+        this.startPathCount = false;
+
+        this.counter = 0.0f;
+
+        this.exploreCounter = 0;
+        this.resultCounter = 0;
+    }
+
+    public void StartExploreCount(bool value)
+    {
+        this.startExploreCount = value;
+    }
+
     public void StartPathCount(bool value)
     {
         this.startPathCount = value;
@@ -24,9 +51,60 @@ public class ShortestPath : MonoBehaviour
 
     private void Update()
     {
+        if (startExploreCount)
+        {
+            PlayExplorePath();
+        }
         if (startPathCount)
         {
-            counter += Time.deltaTime;
+            PlayWalkPath();
+        }
+    }
+
+    private void PlayExplorePath()
+    {
+        counter += Time.deltaTime;
+        if (counter > exploreInterval && exploreCounter < explored.Count)
+        {
+            counter = 0.0f;
+
+            SpriteRenderer sRend = explored[exploreCounter].GetComponent<SpriteRenderer>();
+            sRend.material.color = Color.yellow;
+
+            ++exploreCounter;
+        }
+        else if (counter > exploreInterval && exploreCounter == explored.Count)
+        {
+            counter = 0.0f;
+            exploreCounter = 0;
+
+            explored.Clear();
+
+            startExploreCount = false;
+            startPathCount = true;
+        }
+    }
+
+    private void PlayWalkPath()
+    {
+        counter += Time.deltaTime;
+        if (counter > pathInterval && resultCounter < result.Count)
+        {
+            counter = 0.0f;
+
+            SpriteRenderer sRend = result[resultCounter].GetComponent<SpriteRenderer>();
+            sRend.material.color = Color.red;
+
+            ++resultCounter;
+        }
+        else if (counter > pathInterval && resultCounter == result.Count)
+        {
+            counter = 0.0f;
+            resultCounter = 0;
+
+            result.Clear();
+
+            startPathCount = false;
         }
     }
 
@@ -34,7 +112,7 @@ public class ShortestPath : MonoBehaviour
     {
         nodes = GameObject.FindGameObjectsWithTag("Node");
 
-        List<Transform> result = new List<Transform>();
+        result = new List<Transform>();
         Transform node = null;
 
         if (algorithm == AlgoType.Dijkstra)
@@ -98,15 +176,14 @@ public class ShortestPath : MonoBehaviour
             // If we reach the end node, we will stop.
             if (current == end)
             {
-                startPathCount = false;
                 return end;
             }
 
             //Remove the node, since we are exploring it now.
             unexplored.Remove(current);
 
-            SpriteRenderer sRend = current.GetComponent<SpriteRenderer>();
-            sRend.material.color = Color.yellow;
+            //Add current node to allow looping of animation
+            explored.Add(current);
 
             Node currentNode = current.GetComponent<Node>();
             List<Transform> neighbours = currentNode.GetNeighbourNode();
@@ -185,8 +262,8 @@ public class ShortestPath : MonoBehaviour
             //Remove the node, since we are exploring it now.
             unexplored.Remove(current);
 
-            SpriteRenderer sRend = current.GetComponent<SpriteRenderer>();
-            sRend.material.color = Color.yellow;
+            //Add current node to allow looping of animation
+            explored.Add(current);
             
             Node currentNode = current.GetComponent<Node>();
             List<Transform> neighbours = currentNode.GetNeighbourNode();

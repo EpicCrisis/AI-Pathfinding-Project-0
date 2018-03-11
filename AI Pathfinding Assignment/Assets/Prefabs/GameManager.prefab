@@ -70,9 +70,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc95dc6d7eb51d44a9a7d2795594b0ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  startExploreCount: 0
   startPathCount: 0
   counter: 0
-  interval: 0.2
+  exploreInterval: 0.2
+  pathInterval: 0.2
+  exploreCounter: 0
+  resultCounter: 0
+  explored: []
+  result: []
   algorithm: 0
 --- !u!114 &114466729127763900
 MonoBehaviour:
