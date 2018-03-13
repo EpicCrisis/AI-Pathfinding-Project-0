@@ -18,6 +18,8 @@ public class ShortestPath : MonoBehaviour
 
     [SerializeField] private List<Transform> explored;
     [SerializeField] private List<Transform> result;
+
+    [SerializeField] private float weight = 1.0f;
     
     public enum AlgoType
     {
@@ -27,11 +29,19 @@ public class ShortestPath : MonoBehaviour
 
     public AlgoType algorithm;
 
+    public void SetWeight(float value)
+    {
+        this.weight = value;
+    }
+
     //Reset the animation values on button press.
     public void ResetAnimation()
     {
         this.startExploreCount = false;
         this.startPathCount = false;
+
+        this.explored.Clear();
+        this.result.Clear();
 
         this.counter = 0.0f;
 
@@ -196,7 +206,7 @@ public class ShortestPath : MonoBehaviour
                 if (unexplored.Contains(neighNode) && node.IsWalkable())
                 {
                     // Get the distance of the object.
-                    float distance = Vector2.Distance(neighNode.position, current.position);
+                    float distance = CalculateDistance(neighNode.position, current.position) * weight;
                     distance = currentNode.GetWeight() + distance;
 
                     // If the added distance is less than the current weight.
@@ -275,14 +285,22 @@ public class ShortestPath : MonoBehaviour
                 if (unexplored.Contains(neighNode) && node.IsWalkable())
                 {
                     // Get the distance of the object.
-                    float distance = Vector2.Distance(neighNode.position, current.position) + Vector2.Distance(neighNode.position, end.position) + Vector2.Distance(neighNode.position, start.position);
-                    distance = currentNode.GetWeight() + distance;
+                    float distance = CalculateDistance(current.position, neighNode.position);
+                    float hCost = CalculateDistance(neighNode.position, end.position) * weight;
+                    float gCost = CalculateDistance(neighNode.position, start.position) * weight;
+                    float fCost = hCost + gCost;
 
+                    // Set the calculated heuristics for the node.
+                    node.SetHCost(hCost);
+                    node.SetGCost(gCost);
+
+                    distance = currentNode.GetWeight() + node.GetFCost + distance;
+                    
                     // If the added distance is less than the current weight.
                     if (distance < node.GetWeight())
                     {
                         // We update the new distance as weight and update the new path now.
-                        node.SetWeight(distance);
+                        node.SetWeight(hCost);
                         node.SetParentNode(current);
                     }
                 }
@@ -295,5 +313,21 @@ public class ShortestPath : MonoBehaviour
         print("Path completed!");
 
         return end;
+    }
+    
+    public float CalculateDistance(Vector2 originNode, Vector2 targetNode)
+    {
+        GenerateGridManager grid = GetComponent<GenerateGridManager>();
+        float h;
+
+        if (!grid.GetDiagonal)
+        {
+            h = Mathf.Abs(originNode.x - targetNode.x) + Mathf.Abs(originNode.y - targetNode.y);
+        }
+        else
+        {
+            h = Mathf.Max(Mathf.Abs(originNode.x - targetNode.x),Mathf.Abs(originNode.y - targetNode.y));
+        }
+        return h;
     }
 }

@@ -29,6 +29,14 @@ public class GenerateGridManager : MonoBehaviour
         this.GenerateNeighbours();
     }
 
+    public bool GetDiagonal
+    {
+        get
+        {
+            return enableDiagonal;
+        }
+    }
+
     private void GridInit()
     {
         this.GenerateGrid();

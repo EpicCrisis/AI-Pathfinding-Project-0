@@ -4,14 +4,65 @@ using UnityEngine;
 public class Node : MonoBehaviour
 {
     [SerializeField] private float weight = int.MaxValue;
+    [SerializeField] private float hCost;
+    [SerializeField] private float gCost;
+    [SerializeField] private float fCost;
     [SerializeField] private Transform parentNode = null;
     [SerializeField] private List<Transform> neighbourNode;
     [SerializeField] private bool walkable = true;
     [SerializeField] private bool isSelected = false;
-    
+    [SerializeField] private bool isSettled = false;
+
     void Start()
     {
         this.ResetNode();
+    }
+
+    public float GetHCost
+    {
+        get
+        {
+            return hCost;
+        }
+    }
+
+    public void SetHCost(float value)
+    {
+        this.hCost = value;
+    }
+
+    public float GetGCost
+    {
+        get
+        {
+            return gCost;
+        }
+    }
+
+    public void SetGCost(float value)
+    {
+        this.gCost = value;
+    }
+
+    public float GetFCost
+    {
+        get
+        {
+            return fCost = gCost + hCost;
+        }
+    }
+
+    public bool GetSettled
+    {
+        get
+        {
+            return isSettled;
+        }
+    }
+
+    public void SetSettled(bool value)
+    {
+        this.isSettled = value;
     }
 
     public void SetNeighbourNode(List<Transform> list)

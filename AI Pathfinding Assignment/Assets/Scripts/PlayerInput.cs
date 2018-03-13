@@ -216,6 +216,7 @@ public class PlayerInput : MonoBehaviour
             {
                 Node currentNode = gridManager.grid[i].GetComponent<Node>();
                 SpriteRenderer sRend = currentNode.GetComponent<SpriteRenderer>();
+
                 if (currentNode != startNode || currentNode != endNode || currentNode.IsWalkable())
                 {
                     currentNode.SetWeight(int.MaxValue);
@@ -338,6 +339,14 @@ public class PlayerInput : MonoBehaviour
 
         Scene loadedLevel = SceneManager.GetActiveScene();
         SceneManager.LoadScene(loadedLevel.buildIndex);
+    }
+
+    public void BtnWeight(InputField _value)
+    {
+        float result = Mathf.Abs(float.Parse(_value.text));
+
+        ShortestPath finder = GetComponent<ShortestPath>();
+        finder.SetWeight(result);
     }
 
     public void BtnDiagonal(Toggle value)

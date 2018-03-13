@@ -66,9 +66,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weight: 2.1474836e+9
+  h: 0
+  g: 0
   parentNode: {fileID: 0}
   neighbourNode: []
   walkable: 1
+  isSelected: 0
+  isSettled: 0
 --- !u!212 &212611908582403618
 SpriteRenderer:
   m_ObjectHideFlags: 1
